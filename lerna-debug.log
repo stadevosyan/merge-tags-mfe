@@ -1,0 +1,16 @@
+0 silly argv {
+0 silly argv   cmd: 'startup prepare-package',
+0 silly argv   scope: [ 'feature-a', 'feature-b', 'feature-c', undefined ],
+0 silly argv   stream: true
+0 silly argv }
+1 notice cli vundefined
+2 verbose rootPath /Users/adadayan/playground/server/mfe
+3 notice filter including ["feature-a","feature-b","feature-c",null]
+4 info filter [ 'feature-a', 'feature-b', 'feature-c', undefined ]
+5 error TypeError: Cannot read properties of undefined (reading 'split')
+5 error     at Minimatch.match (/Users/adadayan/playground/server/mfe/node_modules/minimatch/minimatch.js:743:9)
+5 error     at /Users/adadayan/playground/server/mfe/node_modules/minimatch/minimatch.js:717:15
+5 error     at Array.filter (<anonymous>)
+5 error     at Function.minimatch.match (/Users/adadayan/playground/server/mfe/node_modules/minimatch/minimatch.js:716:15)
+5 error     at module.exports (/Users/adadayan/playground/server/mfe/node_modules/multimatch/index.js:25:39)
+5 error     at filterPackages (/Users/adadayan/playground/server/mfe/node_modules/@lerna/filter-packages/filter-packages.js:44:28)

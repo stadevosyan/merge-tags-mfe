@@ -1,0 +1,83 @@
+@import (reference) '~@servicetitan/tokens/dist/tokens.less';
+// build-survey-campaign.module
+.takeover-container {
+    :global {
+        .TakeoverContent {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .takeover-progress,
+    .takeover-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        > div:first-child {
+            max-width: 1920px;
+            min-width: 1280px;
+            width: 80%;
+        }
+    }
+
+    .takeover-content {
+        flex: 1;
+        overflow-y: auto;
+    }
+}
+
+.disabled-rating-step {
+    :global(.ProgressTrackerStep__label) {
+        position: relative;
+        color: @color-neutral-70;
+
+        &:before {
+            content: '4';
+            position: absolute;
+            color: @color-neutral-0;
+            left: -25px;
+            top: -0px;
+        }
+    }
+
+    :global(.ProgressTrackerStep__icon) {
+        background-color: @color-neutral-70;
+
+        :global(.a-Icon) {
+            display: none;
+        }
+    }
+}
+
+// congrats-modal.module
+
+.congrats-image {
+  width: 74px;
+  height: 110px;
+}
+
+
+// draggable-social-platform.module
+
+.platform-select {
+  :global {
+      .Trigger__shortLabel {
+          background-color: transparent;
+          border-right: none;
+      }
+
+      .Trigger__value {
+          display: none !important;
+      }
+  }
+}
+
+.platforms-card {
+  min-width: 405px;
+}
+
+.inactive-button {
+  opacity: @opacity-disabled;
+}
+
