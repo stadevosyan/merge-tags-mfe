@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
     useCallback,
     useEffect,
@@ -13,7 +12,7 @@ import classNames from 'classnames';
 import * as Styles from './merge-tag-editor.module.less';
 import { useMergeTagsEditorHelpers } from '../use-merge-tag-editor-helpers/use-merge-tag-editor-helpers';
 import React from 'react';
-import { caretPositionFromPoint, caretRangeFromPoint } from '../caret-range-from-point/caret-range-from-point';
+
 interface MergeTagEditorProps {
     value: string;
     onChange: (event: SyntheticEvent<HTMLTextAreaElement & HTMLInputElement>, data: any) => void;
@@ -27,38 +26,6 @@ interface MergeTagEditorProps {
     outerClassName?: string;
     onBlur?(): void;
     onFocus?(): void;
-}
-
-function createSelectionFromPoint(startX, startY, endX, endY) {
-    var doc = document;
-    var start, end, range = null;
-    if (typeof doc.caretPositionFromPoint != "undefined") {
-        start = doc.caretPositionFromPoint(startX, startY);
-        end = doc.caretPositionFromPoint(endX, endY);
-        range = doc.createRange();
-        range.setStart(start.offsetNode, start.offset);
-        range.setEnd(end.offsetNode, end.offset);
-    } else if (typeof doc.caretRangeFromPoint != "undefined") {
-        start = doc.caretRangeFromPoint(startX, startY);
-        end = doc.caretRangeFromPoint(endX, endY);
-        range = doc.createRange();
-        range.setStart(start.startContainer, start.startOffset);
-        range.setEnd(end.startContainer, end.startOffset);
-    }
-    if (range !== null && typeof window.getSelection != "undefined") {
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-    } else if (typeof doc.body.createTextRange != "undefined") {
-        range = doc.body.createTextRange();
-        range.moveToPoint(startX, startY);
-        var endRange = range.duplicate();
-        endRange.moveToPoint(endX, endY);
-        range.setEndPoint("EndToEnd", endRange);
-        range.select();
-    }
-
-    return range
 }
 
 export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
@@ -86,6 +53,100 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             generateRemovedRequiredTags,
         } = useMergeTagsEditorHelpers(mergeTags);
 
+        const getRoot = () =>
+            document.activeElement?.shadowRoot?.toString() === '[object ShadowRoot]'
+                ? document.activeElement!.shadowRoot!
+                : document;
+
+        const findInsertPosition = (
+            children: Element[],
+            index: number,
+            moveIndexNumber = 1
+        ): {
+            direction: 'left' | 'right';
+            node: Element;
+        } => {
+            let leftIndex = index - moveIndexNumber;
+            if (leftIndex === -1) {
+                return {
+                    direction: 'left',
+                    node: children[0],
+                };
+            }
+
+            let rightIndex = index + moveIndexNumber;
+
+            if (rightIndex === children.length) {
+                return {
+                    direction: 'right',
+                    node: children[children.length - 1],
+                };
+            }
+
+            const leftContentIsInsertPosition =
+                children[leftIndex].innerHTML === ' ' ||
+                children[leftIndex].innerHTML === '\n' ||
+                children[leftIndex].innerHTML === '\t';
+            if (leftContentIsInsertPosition) {
+                return {
+                    direction: 'left',
+                    node: children[leftIndex],
+                };
+            }
+
+            const rightContentIsInsertPosition =
+                children[rightIndex].innerHTML === ' ' ||
+                children[rightIndex].innerHTML === '\n' ||
+                children[rightIndex].innerHTML === '\t';
+            if (rightContentIsInsertPosition) {
+                return {
+                    direction: 'right',
+                    node: children[rightIndex],
+                };
+            }
+
+            return findInsertPosition(children, index, moveIndexNumber + 1);
+        };
+
+        const handleNVFocus = useCallback((event: DragEvent) => {
+            const editor = contentEditable.current!;
+            // TODO-Sam: understand the reason of check
+            const content =
+                getRoot().activeElement === editor
+                    ? dragTargetHTML.current
+                    : event!.dataTransfer!.getData('text/html');
+
+            const composedPath = event.composedPath();
+            const targetElement = composedPath[0] as HTMLElement;
+            const parent = editor;
+
+            const childrenArray = Array.from(parent.children);
+            const index = childrenArray.indexOf(targetElement);
+
+            let abc = findInsertPosition(childrenArray, index);
+            const { direction, node } = abc;
+            if (direction === 'right') {
+                const newElement = document.createElement('b');
+                newElement.innerHTML = ' ' + content!;
+                parent.insertBefore(newElement, node);
+            } else {
+                const newElement = document.createElement('b');
+                newElement.innerHTML = content! + ' ';
+                parent.insertBefore(newElement, node.nextSibling);
+            }
+            editor.querySelectorAll('.dragged').forEach(node => node.remove());
+        }, []);
+
+        useEffect(() => {
+            if (contentEditable.current) {
+                contentEditable.current.addEventListener('drop', handleNVFocus);
+
+                return () => {
+                    document.removeEventListener('drop', handleNVFocus);
+                };
+            }
+        }, [contentEditable.current]);
+
         useEffect(() => {
             (async () => {
                 if (
@@ -99,19 +160,11 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         }, [mergeTags, processMergeTags, transformToPlainText, value]);
 
         const updateValue = useCallback(
-            async (event: any) => {
+            (event: any) => {
                 if (contentEditable.current) {
                     onChange(event, {
                         value: transformToPlainText(contentEditable.current),
                     });
-                }
-
-                if (
-                    contentEditable.current &&
-                    transformToPlainText(contentEditable.current) !== value
-                ) {
-                    contentEditable.current!.innerHTML =
-                        value.trim() === '' ? '' : await processMergeTags(transformToPlainText(contentEditable.current), mergeTags);
                 }
             },
             [onChange, transformToPlainText]
@@ -119,8 +172,9 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
         const handleDragStart = useCallback((event: any) => {
             const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
+
             if (target) {
-                if (document.activeElement === contentEditable.current!) {
+                if (getRoot().activeElement === contentEditable.current!) {
                     dragTargetHTML.current = target.outerHTML;
                     target.classList.add('dragged');
                 } else {
@@ -130,64 +184,9 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         }, []);
 
         const handleDragOver = useCallback((event: any) => {
-            console.log('dragggg');
             event.preventDefault();
             return false;
         }, []);
-
-        const handleDrop = useCallback(
-            (event: any) => {
-                console.log('drop: ', event);
-                const editor = contentEditable.current!;
-                const content =
-                    document.activeElement === editor
-                        ? dragTargetHTML.current
-                        : event.dataTransfer.getData('text/html');
-                console.log('content: ', content);
-                
-                        
-                let range = null;
-
-                if (document.caretRangeFromPoint) {
-                    // Chrome
-                    range = document.caretRangeFromPoint(event.clientX, event.clientY);
-                    const s = document.elementFromPoint(event.clientX, event.clientY)
-                    console.log('s: ', s);
-                    
-                } else if (event.rangeParent) {
-                    // Firefox
-                    range = document.createRange();
-                    range.setStart(event.rangeParent, event.rangeOffset);
-                }
-                
-
-                console.log({
-                    clientX: event.clientX, 
-                    clientY: event.clientY, 
-                    content,
-                    range,
-                });
-
-                // const sel = document.body.firstElementChild.root.getSelection();
-
-                const sel = window.getSelection();
-
-                if (content && range) {
-                    sel?.removeAllRanges();
-                    sel?.addRange(range);
-
-                    editor.focus();
-                    document.execCommand('insertHTML', false, content + ' ');
-                    sel?.removeAllRanges();
-                    editor.querySelectorAll('.dragged').forEach(node => node.remove());
-                    dragTargetHTML.current = null;
-                    editor.focus();
-                }
-
-                updateValue(event);
-            },
-            [updateValue]
-        );
 
         const handleFocus = useCallback(() => {
             const editor = contentEditable.current;
@@ -261,7 +260,6 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                     onClick={handleDelete}
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
-                    onDrop={handleDrop}
                     onInput={handleChange}
                     onBlur={handleBlur}
                     onFocus={handleFocus}

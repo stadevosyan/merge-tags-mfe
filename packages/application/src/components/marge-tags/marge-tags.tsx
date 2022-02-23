@@ -3,6 +3,8 @@ import { Stack, TagGroup } from '@servicetitan/design-system';
 import React, { Fragment } from 'react';
 import { MergeTagEditor } from './merge-tags-control/merge-tag-editor';
 import { MergeTag } from './merge-tags-control/merge-tag';
+import { MergeTagEditorMy } from './merge-tags-control-my/merge-tag-editor-my';
+import { MergeTagMy } from './merge-tags-control-my/merge-tag-my';
 
 const mergeTags = [
     {
@@ -64,8 +66,9 @@ const mergeTags = [
     },
 ];
 
-const body =
-    'Hi {{customer_first_name}}, we’d like to know how did {{technician_name}} do in completing your request?\n{{listing_link}} ';
+// const body =
+//     'Hi {{customer_first_name}}, we’d like to know how did {{technician_name}} do in completing your request?\n{{listing_link}} ';
+const body = 'h abcdef k ';
 
 export function MergeTags() {
     const onChangeHandler = e => {
