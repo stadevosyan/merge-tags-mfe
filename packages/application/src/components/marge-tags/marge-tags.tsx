@@ -3,8 +3,7 @@ import { Stack, TagGroup } from '@servicetitan/design-system';
 import React, { Fragment } from 'react';
 import { MergeTagEditor } from './merge-tags-control/merge-tag-editor';
 import { MergeTag } from './merge-tags-control/merge-tag';
-import { MergeTagEditorMy } from './merge-tags-control-my/merge-tag-editor-my';
-import { MergeTagMy } from './merge-tags-control-my/merge-tag-my';
+import { MergeTagEditor_Old } from './merge-tags-control-old/merge-tag-editor-old';
 
 const mergeTags = [
     {
@@ -85,7 +84,7 @@ export function MergeTags() {
 
     return (
         <Fragment>
-            <MergeTagEditor
+            <MergeTagEditor_Old
                 value={body}
                 onChange={onChangeHandler}
                 onBlur={blurHandler}
