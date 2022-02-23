@@ -13,12 +13,12 @@ interface MergeTagProps {
     readonly?: boolean;
 }
 
-export const MergeTag: FC<MergeTagProps> = ({
-                                                mergeTag: { tag, label, required },
-                                                clickHandler = () => {},
-                                                disabled,
-                                                readonly,
-                                            }) => {
+export const MergeTag_Old: FC<MergeTagProps> = ({
+    mergeTag: { tag, label, required },
+    clickHandler = () => {},
+    disabled,
+    readonly,
+}) => {
     const dragHandler = (evt: DragEvent) => {
         const target = evt.target as HTMLSpanElement;
         evt.dataTransfer?.setData('text/html', target?.outerHTML);
