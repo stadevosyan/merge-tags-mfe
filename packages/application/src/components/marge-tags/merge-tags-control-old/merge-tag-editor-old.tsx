@@ -5,20 +5,17 @@ import {
     SyntheticEvent,
     ReactElement,
     FC,
-    KeyboardEvent
-} from "react";
-import { observer } from "mobx-react";
-import classNames from "classnames";
-import * as Styles from "./merge-tag-editor-old.module.less";
-import { useMergeTagsEditorHelpers_Old } from "../use-merge-tag-editor-helpers-old/use-merge-tag-editor-helpers-old";
-import React from "react";
+    KeyboardEvent,
+} from 'react';
+import { observer } from 'mobx-react';
+import classNames from 'classnames';
+import * as Styles from './merge-tag-editor-old.module.less';
+import { useMergeTagsEditorHelpers_Old } from '../use-merge-tag-editor-helpers-old/use-merge-tag-editor-helpers-old';
+import React from 'react';
 
 interface MergeTagEditorProps {
     value: string;
-    onChange: (
-        event: SyntheticEvent<HTMLTextAreaElement & HTMLInputElement>,
-        data: any
-    ) => void;
+    onChange: (event: SyntheticEvent<HTMLTextAreaElement & HTMLInputElement>, data: any) => void;
     error?: boolean | ReactElement<any> | string;
     thin?: boolean;
     hasFooter?: boolean;
@@ -33,27 +30,27 @@ interface MergeTagEditorProps {
 
 export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
     ({
-         value,
-         onChange,
-         onBlur = () => {},
-         onFocus = () => {},
-         error,
-         thin,
-         oneline,
-         placeholder,
-         mergeTags,
-         className,
-         outerClassName,
-         children,
-         hasFooter
-     }) => {
+        value,
+        onChange,
+        onBlur = () => {},
+        onFocus = () => {},
+        error,
+        thin,
+        oneline,
+        placeholder,
+        mergeTags,
+        className,
+        outerClassName,
+        children,
+        hasFooter,
+    }) => {
         const contentEditable = useRef<HTMLDivElement>(null);
         const dragTargetHTML = useRef<string | null>(null);
         const {
             processMergeTags_Old,
             transformToPlainText_Old,
             validateRemovableTags_Old,
-            generateRemovedRequiredTags_Old
+            generateRemovedRequiredTags_Old,
         } = useMergeTagsEditorHelpers_Old(mergeTags);
 
         useEffect(() => {
@@ -63,7 +60,7 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
                     transformToPlainText_Old(contentEditable.current) !== value
                 ) {
                     contentEditable.current!.innerHTML =
-                        value.trim() === "" ? "" : await processMergeTags_Old(value, mergeTags);
+                        value.trim() === '' ? '' : await processMergeTags_Old(value, mergeTags);
                 }
             })();
         }, [mergeTags, processMergeTags_Old, transformToPlainText_Old, value]);
@@ -72,7 +69,7 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
             (event: any) => {
                 if (contentEditable.current) {
                     onChange(event, {
-                        value: transformToPlainText_Old(contentEditable.current)
+                        value: transformToPlainText_Old(contentEditable.current),
                     });
                 }
             },
@@ -80,16 +77,13 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
         );
 
         const handleDragStart = useCallback((event: any) => {
-            const target = event.target.closest("[data-merge-tag]") as HTMLDivElement;
+            const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
             if (target) {
                 if (document.activeElement === contentEditable.current!) {
                     dragTargetHTML.current = target.outerHTML;
-                    target.classList.add("dragged");
+                    target.classList.add('dragged');
                 } else {
-                    event.originalEvent.dataTransfer.setData(
-                        "text/html",
-                        target.outerHTML
-                    );
+                    event.originalEvent.dataTransfer.setData('text/html', target.outerHTML);
                 }
             }
         }, []);
@@ -101,11 +95,15 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
 
         const handleDrop = useCallback(
             (event: any) => {
+                console.log({ event });
                 const editor = contentEditable.current!;
                 const content =
                     document.activeElement === editor
                         ? dragTargetHTML.current
-                        : event.dataTransfer.getData("text/html");
+                        : event.dataTransfer.getData('text/html');
+
+                console.log({ content });
+
                 let range = null;
 
                 if (document.caretRangeFromPoint) {
@@ -124,9 +122,11 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
                     sel?.addRange(range);
 
                     editor.focus();
-                    document.execCommand("insertHTML", false, content + " ");
+                    console.log('inside if');
+                    console.log({ content });
+                    document.execCommand('insertHTML', false, content + ' ');
                     sel?.removeAllRanges();
-                    editor.querySelectorAll(".dragged").forEach((node) => node.remove());
+                    editor.querySelectorAll('.dragged').forEach(node => node.remove());
                     dragTargetHTML.current = null;
                     editor.focus();
                 }
@@ -139,21 +139,18 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
         const handleFocus = useCallback(() => {
             const editor = contentEditable.current;
             if (editor && editor.lastChild?.nodeType === 1) {
-                editor.append(" ");
+                editor.append(' ');
             }
             onFocus();
         }, [onFocus]);
 
         const handleBlur = useCallback(
-            async (event) => {
+            async event => {
                 const textTagElements = await generateRemovedRequiredTags_Old(
                     contentEditable.current
                 );
                 if (textTagElements && contentEditable.current) {
-                    contentEditable.current.insertAdjacentHTML(
-                        "beforeend",
-                        textTagElements
-                    );
+                    contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
                     updateValue(event);
                 }
                 onBlur();
@@ -164,8 +161,8 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
         const handleDelete = useCallback(
             (event: any) => {
                 const target = event.target as HTMLSpanElement;
-                if (target.closest(".Tag__close")) {
-                    target.closest("[data-merge-tag]")?.remove();
+                if (target.closest('.Tag__close')) {
+                    target.closest('[data-merge-tag]')?.remove();
                     updateValue(event);
                 }
             },
@@ -175,12 +172,13 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
         const handleChange = useCallback(
             async (event: SyntheticEvent<HTMLDivElement>) => {
                 const editor = contentEditable.current!;
+
                 if (oneline) {
-                    editor.querySelectorAll("br").forEach((node) => node.remove());
+                    editor.querySelectorAll('br').forEach(node => node.remove());
                 } else {
-                    editor.querySelectorAll("div").forEach((div) => {
+                    editor.querySelectorAll('div').forEach(div => {
                         if (div.classList.length === 0 && div.children.length >= 1) {
-                            div.classList.add("d-b-i");
+                            div.classList.add('d-b-i');
                         }
                     });
                 }
@@ -191,11 +189,11 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
         );
 
         const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-            if (oneline && event.key === "Enter") {
+            if (oneline && event.key === 'Enter') {
                 event.preventDefault();
             }
 
-            if (event.key === "Backspace") {
+            if (event.key === 'Backspace') {
                 validateRemovableTags_Old(event);
             }
         };
@@ -208,7 +206,7 @@ export const MergeTagEditor_Old: FC<MergeTagEditorProps> = observer(
                         [Styles.editorError]: !!error,
                         [Styles.thin]: thin,
                         [Styles.hasFooter]: hasFooter,
-                        [Styles.oneline]: oneline
+                        [Styles.oneline]: oneline,
                     })}
                     onClick={handleDelete}
                     onDragStart={handleDragStart}

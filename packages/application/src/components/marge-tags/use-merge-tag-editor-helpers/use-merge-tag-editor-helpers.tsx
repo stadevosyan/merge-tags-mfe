@@ -3,18 +3,29 @@ import { useCallback, useMemo, KeyboardEvent } from 'react';
 import ReactDOM from 'react-dom';
 import { MergeTag } from '../merge-tags-control/merge-tag';
 
-const mergeTagToHtml: Record<string, string> = {
-    '{{customer_first_name}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{customer_first_name}}" data-merge-tag-required="false" contenteditable="false"><span class="Tag__body">Customer First Name</span><button class="Button Tag__close Button--grey Button--subtle Button--xsmall Button--icon-only Button--focus-visible" role="button" type="button"><span class="Button__content"><span class="Button__icon"><i class="a-Icon a-Icon--clear Button__icon-svg" width="1em" height="1em"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></i></span></span></button></div>`,
-    '{{technician_name}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{technician_name}}" data-merge-tag-required="false" contenteditable="false"><span class="Tag__body">Technician Full Name</span><button class="Button Tag__close Button--grey Button--subtle Button--xsmall Button--icon-only Button--focus-visible" role="button" type="button"><span class="Button__content"><span class="Button__icon"><i class="a-Icon a-Icon--clear Button__icon-svg" width="1em" height="1em"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></i></span></span></button></div>`,
-    '{{company_name}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{company_name}}" data-merge-tag-required="false" contenteditable="false"><span class="Tag__body">Company Name</span><button class="Button Tag__close Button--grey Button--subtle Button--xsmall Button--icon-only Button--focus-visible" role="button" type="button"><span class="Button__content"><span class="Button__icon"><i class="a-Icon a-Icon--clear Button__icon-svg" width="1em" height="1em"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></i></span></span></button></div>`,
-    '{{location}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{location}}" data-merge-tag-required="false" contenteditable="false"><span class="Tag__body">Location</span><button class="Button Tag__close Button--grey Button--subtle Button--xsmall Button--icon-only Button--focus-visible" role="button" type="button"><span class="Button__content"><span class="Button__icon"><i class="a-Icon a-Icon--clear Button__icon-svg" width="1em" height="1em"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></i></span></span></button></div>`,
-    '{{job_type}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{job_type}}" data-merge-tag-required="false" contenteditable="false"><span class="Tag__body">Job Type</span><button class="Button Tag__close Button--grey Button--subtle Button--xsmall Button--icon-only Button--focus-visible" role="button" type="button"><span class="Button__content"><span class="Button__icon"><i class="a-Icon a-Icon--clear Button__icon-svg" width="1em" height="1em"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></i></span></span></button></div>`,
-    '{{job_complete_date}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{job_complete_date}}" data-merge-tag-required="false" contenteditable="false"><span class="Tag__body">Job Complete Date</span><button class="Button Tag__close Button--grey Button--subtle Button--xsmall Button--icon-only Button--focus-visible" role="button" type="button"><span class="Button__content"><span class="Button__icon"><i class="a-Icon a-Icon--clear Button__icon-svg" width="1em" height="1em"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></i></span></span></button></div>`,
-    '{{listing_link}}': `<div class="Tag _bMaMd6etahbF9CRyKqK Tag--default" title="" draggable="true" data-merge-tag="{{listing_link}}" data-merge-tag-required="true" contenteditable="false"><span class="Tag__body">Listing Link</span></div>`,
-};
+const mergeTagToHtml = new Map<string, string>();
 
 interface ISelection extends Selection {
     extentOffset?: number;
+}
+
+export enum ContentNodeType {
+    Text = 'text',
+    MergeTag = 'merge-tag',
+}
+
+interface IMergeTagInfo {
+    insertIndex: number;
+    tagToReplace: string;
+}
+
+export enum TextTypeAttribute {
+    FirstSpace = 'first-space',
+    NotFirstSpace = 'not-first-space',
+    NewLine = 'new-line',
+    LeftText = 'left-text',
+    RightText = 'right-text',
+    SingleChar = 'single-char',
 }
 
 interface IChildNode extends ChildNode {
@@ -27,9 +38,15 @@ interface IEditorMergeTags {
     required?: boolean;
 }
 
+enum MatchType {
+    Word,
+    MergeTag,
+    Space,
+    NewLine,
+}
+
 export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
     const transformToPlainText = useCallback((editor: HTMLDivElement): string => {
-        console.log('transform to plain text');
         const editorClone = editor.cloneNode(true) as HTMLDivElement;
 
         editorClone.querySelectorAll('[data-merge-tag]').forEach(tag => {
@@ -39,14 +56,10 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
             }
         });
 
-        const initialInnerHtml = editorClone.innerHTML;
-
         editorClone.innerHTML = editorClone.innerHTML.replace(
             /<div class="d-b-i"><br><\/div>/gi,
             '\n'
         );
-
-        const secondInnerHtml = editorClone.innerHTML;
 
         // eslint-disable-next-line curly
         while (
@@ -56,9 +69,6 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
                 '\n$1'
             ))
         );
-        const thirdInnerHtml = editorClone.innerHTML;
-        console.log(initialInnerHtml === secondInnerHtml);
-        console.log(thirdInnerHtml === secondInnerHtml);
 
         return editorClone.innerText;
     }, []);
@@ -105,70 +115,198 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
                     return `${tag.tag}`;
                 })
                 .join('\n');
-            return processMergeTags(text, tags);
+            return textToTags(text, tags);
         },
         [requiredTags]
     );
 
-    const checkIfItIsMergeTag = (
-        text: string,
-        startIndex: number,
-        mergeTags: { tag: string; label: string; required?: boolean }[]
+    const editorContentToTags = async (
+        editor: HTMLDivElement,
+        availableMergeTags: { tag: string; label: string; required?: boolean }[],
+        convertToPlainTextBeforeHand = false
     ) => {
-        for (let i = 0; i < mergeTags.length; i++) {
-            const subStringStartingFromIndex = text.substring(startIndex);
+        let textToConvert;
 
-            if (subStringStartingFromIndex.startsWith(mergeTags[i].tag)) {
-                return {
-                    startIndex: startIndex,
-                    tagLength: mergeTags[i].tag.length,
-                    tagToReplace: mergeTagToHtml[mergeTags[i].tag],
-                };
-            }
+        if (convertToPlainTextBeforeHand) {
+            textToConvert = transformToPlainText(editor);
+        } else {
+            textToConvert = editor.innerHTML;
         }
-        return false;
+
+        return await textToTags(textToConvert, availableMergeTags);
     };
 
-    const processMergeTags = useCallback(
-        (
+    const textToTags = useCallback(
+        async (
             text: string,
-            mergeTags: { tag: string; label: string; required?: boolean }[],
-        ): Promise<string> =>
-            new Promise(resolve => {
-                let newestValue = '';
+            availableMergeTags: { tag: string; label: string; required?: boolean }[]
+        ) => {
+            let textsConverted = '';
+            let mergeTagsInfo: IMergeTagInfo[] = [];
+            let lastMatch: MatchType | undefined;
+            let i = 0;
 
-                let i = 0;
-                while (i < text.length) {
-                    if (text[i] === '{' && text[i + 1] === '{') {
-                        let checkResponse = checkIfItIsMergeTag(text, i, mergeTags);
+            while (i < text.length) {
+                const char = text[i];
+                // TODO use if else for the whole block
 
-                        if (checkResponse) {
-                            newestValue += checkResponse.tagToReplace;
-                            i += checkResponse.tagLength;
-                            continue;
-                        }
-                    }
+                if (char === '{' && text[i + 1] === '{') {
+                    let mergeTag = checkIfItIsMergeTag(text, i, availableMergeTags);
 
-                    let matchWhiteSpaces = text[i].match(/[\n\t\s]/);
+                    if (mergeTag) {
+                        mergeTagsInfo.push({
+                            insertIndex: textsConverted.length,
+                            tagToReplace: mergeTag,
+                        });
 
-                    if (matchWhiteSpaces) {
-                        newestValue += `<i>${matchWhiteSpaces[0]}</i>`;
-                        i++;
+                        lastMatch = MatchType.MergeTag;
+                        i += mergeTag.length;
                         continue;
                     }
-
-                    newestValue += `<span>${text[i]}</span>`;
-                    i++;
                 }
-                resolve(newestValue);
-            }),
+
+                if (matchesSpace(char)) {
+                    let typeAttribute =
+                        lastMatch !== MatchType.Space
+                            ? TextTypeAttribute.FirstSpace
+                            : TextTypeAttribute.NotFirstSpace;
+                    textsConverted += textNodeHtmlString(typeAttribute, char);
+                    i++;
+                    lastMatch = MatchType.Space;
+                    continue;
+                }
+
+                if (matchesNewLine(char)) {
+                    textsConverted += textNodeHtmlString(TextTypeAttribute.NewLine, char);
+                    i++;
+                    lastMatch = MatchType.NewLine;
+                    continue;
+                }
+
+                const word = findMatchWord(text, i, availableMergeTags);
+                const spanTags = wordToSpanTags(word);
+
+                textsConverted += spanTags;
+                i += word.length;
+                lastMatch = MatchType.Word;
+            }
+
+            return await processMergeTags(textsConverted, mergeTagsInfo, availableMergeTags);
+        },
         []
     );
 
     return {
-        processMergeTags,
+        editorContentToTags,
+        textToTags,
         transformToPlainText,
         validateRemovableTags,
         generateRemovedRequiredTags,
     };
 };
+
+const processMergeTags = async (
+    text: string,
+    mergeTagsInfo: IMergeTagInfo[],
+    // TODO will need to have in some other format not to loop through here
+    availableMergeTags: { tag: string; label: string; required?: boolean }[]
+) => {
+    // // to start replacing from right to left, not to change the index
+    const mergeTagsUsed = mergeTagsInfo.map(item => item.tagToReplace);
+    const mergeTagsNotMapped = mergeTagsUsed.filter(item => !mergeTagToHtml.has(item));
+
+    if (mergeTagsNotMapped.length) {
+        await Promise.all(
+            mergeTagsNotMapped.map(
+                item =>
+                    new Promise(resolve => {
+                        // TODO need to get rid of, to avoid n2 complexity
+                        const mergeTag = availableMergeTags.find(mtag => mtag.tag === item)!;
+                        const myDiv = document.createElement('div');
+
+                        try {
+                            ReactDOM.render(<MergeTag mergeTag={mergeTag} />, myDiv, () => {
+                                mergeTagToHtml.set(item, myDiv.innerHTML);
+                                resolve(true);
+                            });
+                        } catch (e) {
+                            console.warn(e);
+                            mergeTagToHtml.set(item, '');
+                            resolve(true);
+                        }
+                    })
+            )
+        );
+    }
+
+    // to start inserting from right to left, not to change the insertion index while inserting the tag
+    const mergeTagsInfoReversed = mergeTagsInfo.reverse();
+
+    let textToReturn = text;
+    mergeTagsInfoReversed.forEach(item => {
+        const { insertIndex, tagToReplace } = item;
+        textToReturn =
+            textToReturn.substring(0, insertIndex) +
+            mergeTagToHtml.get(tagToReplace) +
+            textToReturn.substring(insertIndex);
+    });
+
+    return textToReturn;
+};
+
+const checkIfItIsMergeTag = (
+    text: string,
+    startIndex: number,
+    mergeTags: { tag: string; label: string; required?: boolean }[]
+) => {
+    for (let i = 0; i < mergeTags.length; i++) {
+        const subStringStartingFromIndex = text.substring(startIndex);
+
+        if (subStringStartingFromIndex.startsWith(mergeTags[i].tag)) {
+            return mergeTags[i].tag;
+        }
+    }
+    return false;
+};
+
+const matchesSpace = (char: String) => char.match(/[\t\s]/);
+const matchesNewLine = (char: String) => char.match(/\n/);
+const matchesWhiteSpace = (char: String) => char.match(/[\n\t\s]/);
+
+const findMatchWord = (
+    text: string,
+    i: number,
+    mergeTags: { tag: string; label: string; required?: boolean }[]
+) => {
+    let word = '';
+    for (let j = i; j < text.length; j++) {
+        // if between the word and merge tag there is no space
+        if (text[j] === '{' && text[j + 1] === '{' && checkIfItIsMergeTag(text, j, mergeTags)) {
+            return word;
+        } else if (matchesWhiteSpace(text[j])) {
+            return word;
+        } else {
+            word += text[j];
+        }
+    }
+    return word;
+};
+
+const wordToSpanTags = (word: string) => {
+    const centerIndex = Math.ceil(word.length / 2);
+    const leftText = word.slice(0, centerIndex);
+    const rightText = word.slice(centerIndex, word.length);
+
+    let leftSpanTypeAttribute =
+        rightText !== undefined ? TextTypeAttribute.LeftText : TextTypeAttribute.SingleChar;
+    let tagsString = textNodeHtmlString(leftSpanTypeAttribute, leftText);
+
+    if (rightText) {
+        tagsString += textNodeHtmlString(TextTypeAttribute.RightText, rightText);
+    }
+
+    return tagsString;
+};
+
+const textNodeHtmlString = (textType: TextTypeAttribute, content: string) =>
+    `<span data-node-type=${ContentNodeType.Text} data-text-type=${textType}>${content}</span>`;
