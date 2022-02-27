@@ -148,7 +148,6 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
 
             while (i < text.length) {
                 const char = text[i];
-                // TODO use if else for the whole block
 
                 if (char === '{' && text[i + 1] === '{') {
                     let mergeTag = checkIfItIsMergeTag(text, i, availableMergeTags);
@@ -161,11 +160,8 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
 
                         lastMatch = MatchType.MergeTag;
                         i += mergeTag.length;
-                        continue;
                     }
-                }
-
-                if (matchesSpace(char)) {
+                } else if (matchesSpace(char)) {
                     let typeAttribute =
                         lastMatch !== MatchType.Space
                             ? TextTypeAttribute.FirstSpace
@@ -173,22 +169,18 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
                     textsConverted += textNodeHtmlString(typeAttribute, char);
                     i++;
                     lastMatch = MatchType.Space;
-                    continue;
-                }
-
-                if (matchesNewLine(char)) {
+                } else if (matchesNewLine(char)) {
                     textsConverted += textNodeHtmlString(TextTypeAttribute.NewLine, char);
                     i++;
                     lastMatch = MatchType.NewLine;
-                    continue;
+                } else {
+                    const word = findMatchWord(text, i, availableMergeTags);
+                    const spanTags = wordToSpanTags(word);
+
+                    textsConverted += spanTags;
+                    i += word.length;
+                    lastMatch = MatchType.Word;
                 }
-
-                const word = findMatchWord(text, i, availableMergeTags);
-                const spanTags = wordToSpanTags(word);
-
-                textsConverted += spanTags;
-                i += word.length;
-                lastMatch = MatchType.Word;
             }
 
             return await processMergeTags(textsConverted, mergeTagsInfo, availableMergeTags);
@@ -208,7 +200,6 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
 const processMergeTags = async (
     text: string,
     mergeTagsInfo: IMergeTagInfo[],
-    // TODO will need to have in some other format not to loop through here
     availableMergeTags: { tag: string; label: string; required?: boolean }[]
 ) => {
     // to start replacing from right to left, not to change the index

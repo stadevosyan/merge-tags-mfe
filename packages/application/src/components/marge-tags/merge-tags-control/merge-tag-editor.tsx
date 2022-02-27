@@ -106,7 +106,6 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 node.remove();
             });
 
-            setIsDirty(true);
             editor.focus();
         }, []);
 
@@ -188,7 +187,6 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         const handleChange = useCallback(
             async (event: SyntheticEvent<HTMLDivElement>) => {
                 const editor = contentEditable.current!;
-                // TODO, double check might be needed to remove some other way
                 if (oneline) {
                     editor.querySelectorAll('br').forEach(node => node.remove());
                 } else {
