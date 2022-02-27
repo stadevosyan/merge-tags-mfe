@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import * as Styles from './merge-tag-editor.module.less';
 import {
     ContentNodeType,
+    isTextElement,
     TextTypeAttribute,
     useMergeTagsEditorHelpers,
 } from '../use-merge-tag-editor-helpers/use-merge-tag-editor-helpers';
@@ -66,6 +67,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 : document;
 
         const handleDrop = useCallback((event: DragEvent) => {
+            console.log('drop');
             const editor = contentEditable.current!;
             const content =
                 getRoot().activeElement === editor
@@ -94,7 +96,10 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             }
 
             dragTargetHTML.current = null;
-            editor.querySelectorAll('.dragged').forEach(node => node.remove());
+            editor.querySelectorAll('.dragged').forEach(node => {
+                removeNeighboringSpaceElement(node as HTMLElement);
+                node.remove();
+            });
         }, []);
 
         useEffect(() => {
@@ -127,6 +132,12 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             }
         }, []);
 
+        const handleDragEnd = useCallback((event: any) => {
+            const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
+            // if merge tag is not dropped remove dragged class, not to remove the element later
+            target.classList.remove('dragged');
+        }, []);
+
         const handleDragOver = useCallback((event: any) => {
             event.preventDefault();
             return false;
@@ -141,19 +152,19 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         }, [onFocus]);
 
         const handleBlur = useCallback(
-           async event => {
+            async event => {
                 if (isDirty) {
                     const editor = contentEditable.current!;
                     const contentToText = transformToPlainText(editor);
 
                     editor.innerHTML = await textToTags(contentToText, mergeTags);
 
-                // TODO!: logic needs to be reconsidered
-                // TODO!: logic needs to be considered for onChange as well
-                const textTagElements = await generateRemovedRequiredTags(contentEditable.current);
-                if (textTagElements && contentEditable.current) {
-                    contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
-                }
+                    const textTagElements = await generateRemovedRequiredTags(
+                        contentEditable.current
+                    );
+                    if (textTagElements && contentEditable.current) {
+                        contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
+                    }
 
                     setIsDirty(false);
                 }
@@ -211,6 +222,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                     })}
                     onClick={handleDelete}
                     onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                     onDragOver={handleDragOver}
                     onInput={handleChange}
                     onBlur={handleBlur}
@@ -226,7 +238,17 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
     }
 );
 
-const insertOnTextNode = () => {};
+const removeNeighboringSpaceElement = (node: HTMLElement) => {
+    const leftSibling = node.previousElementSibling as HTMLElement;
+    if (leftSibling && isTextElement(leftSibling)) {
+        leftSibling.remove();
+    } else {
+        const rightSibling = node.nextElementSibling as HTMLElement;
+        if (rightSibling && isTextElement(rightSibling)) {
+            rightSibling.remove();
+        }
+    }
+};
 
 const shouldInsertBefore = (element: HTMLElement) => {
     let insertBefore;

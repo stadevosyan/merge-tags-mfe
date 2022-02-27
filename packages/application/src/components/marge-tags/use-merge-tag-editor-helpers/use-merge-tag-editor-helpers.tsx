@@ -273,6 +273,14 @@ const matchesSpace = (char: String) => char.match(/[\t\s]/);
 const matchesNewLine = (char: String) => char.match(/\n/);
 const matchesWhiteSpace = (char: String) => char.match(/[\n\t\s]/);
 
+export const isTextElement = (element: HTMLElement) => {
+    const textAttribute = element.getAttribute('data-text-type');
+    return (
+        textAttribute === TextTypeAttribute.FirstSpace ||
+        textAttribute === TextTypeAttribute.NotFirstSpace
+    );
+};
+
 const findMatchWord = (
     text: string,
     i: number,
