@@ -65,13 +65,14 @@ const mergeTags = [
     },
 ];
 
-// const body =
-//     'Hi {{customer_first_name}}, we’d like to know how did {{technician_name}} do in completing your request?\n{{listing_link}} ';
-const body = 'h abcdef k ';
+const body =
+    'Hi {{customer_first_name}}, we’d like to know how did {{technician_name}} do in completing your request?\n{{listing_link}} ';
+// const body = 'Hi {{customer_first_name}} abs ef';
+// const body = 'h abcdef k \n{{listing_link}}';
 
 export function MergeTags() {
-    const onChangeHandler = e => {
-        console.log('e: ', e);
+    const onChangeHandler = (e, data) => {
+        console.log({ data });
     };
 
     const blurHandler = e => {
@@ -84,7 +85,7 @@ export function MergeTags() {
 
     return (
         <Fragment>
-            <MergeTagEditor_Old
+            <MergeTagEditor
                 value={body}
                 onChange={onChangeHandler}
                 onBlur={blurHandler}

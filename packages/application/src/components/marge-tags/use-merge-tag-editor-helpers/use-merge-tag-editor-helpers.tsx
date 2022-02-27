@@ -218,6 +218,7 @@ const processMergeTags = async (
                         try {
                             ReactDOM.render(<MergeTag mergeTag={mergeTag} />, myDiv, () => {
                                 mergeTagToHtml.set(item, myDiv.innerHTML);
+                                myDiv.remove();
                                 resolve(true);
                             });
                         } catch (e) {
