@@ -58,7 +58,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             generateRemovedRequiredTags,
         } = useMergeTagsEditorHelpers(mergeTags);
 
-        const [needsToBeConvertedToTags, setNeedsToBeConvertedToTags] = useState(false);
+        const [isDirty, setIsDirty] = useState(false);
 
         const getRoot = () =>
             document.activeElement?.shadowRoot?.toString() === '[object ShadowRoot]'
@@ -112,7 +112,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 contentEditable.current!.innerHTML =
                     value.trim() === '' ? '' : await textToTags(value, mergeTags);
             })();
-        }, [mergeTags, textToTags, transformToPlainText]);
+        }, [mergeTags, textToTags]);
 
         const handleDragStart = useCallback((event: any) => {
             const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
@@ -141,13 +141,12 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         }, [onFocus]);
 
         const handleBlur = useCallback(
-            async event => {
-                const editor = contentEditable.current!;
-                const contentToText = transformToPlainText(editor);
+           async event => {
+                if (isDirty) {
+                    const editor = contentEditable.current!;
+                    const contentToText = transformToPlainText(editor);
 
-                if (needsToBeConvertedToTags) {
                     editor.innerHTML = await textToTags(contentToText, mergeTags);
-                }
 
                 // TODO!: logic needs to be reconsidered
                 // TODO!: logic needs to be considered for onChange as well
@@ -156,9 +155,11 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                     contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
                 }
 
+                    setIsDirty(false);
+                }
                 onBlur();
             },
-            [generateRemovedRequiredTags, onBlur, needsToBeConvertedToTags]
+            [generateRemovedRequiredTags, onBlur, isDirty, setIsDirty]
         );
 
         const handleDelete = useCallback((event: any) => {
@@ -182,11 +183,8 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                     });
                 }
 
-                // if (Array.from(editor.childNodes).some(item => item.nodeType === Node.TEXT_NODE)) {
-                // check if text content is inserted
-                if (editor.children.length !== editor.childNodes.length) {
-                    setNeedsToBeConvertedToTags(true);
-                }
+                // to reconstruct tags onBlur event
+                setIsDirty(true);
             },
             [oneline]
         );
