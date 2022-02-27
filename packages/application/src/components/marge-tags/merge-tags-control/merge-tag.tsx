@@ -5,6 +5,7 @@ import { Tag } from '@servicetitan/design-system';
 
 import * as Styles from './merge-tag.module.less';
 import React from 'react';
+import { ContentNodeType } from '../use-merge-tag-editor-helpers/use-merge-tag-editor-helpers';
 
 interface MergeTagProps {
     mergeTag: { tag: string; label: string; required?: boolean };
@@ -34,6 +35,7 @@ export const MergeTag: FC<MergeTagProps> = ({
             })}
             data-merge-tag={tag}
             data-merge-tag-required={required}
+            data-node-type={ContentNodeType.MergeTag}
             contentEditable={false}
             onDragStart={!disabled && !readonly ? dragHandler : undefined}
             onClose={!required && !readonly ? () => {} : undefined}

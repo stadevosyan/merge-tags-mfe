@@ -211,7 +211,7 @@ const processMergeTags = async (
     // TODO will need to have in some other format not to loop through here
     availableMergeTags: { tag: string; label: string; required?: boolean }[]
 ) => {
-    // // to start replacing from right to left, not to change the index
+    // to start replacing from right to left, not to change the index
     const mergeTagsUsed = mergeTagsInfo.map(item => item.tagToReplace);
     const mergeTagsNotMapped = mergeTagsUsed.filter(item => !mergeTagToHtml.has(item));
 
