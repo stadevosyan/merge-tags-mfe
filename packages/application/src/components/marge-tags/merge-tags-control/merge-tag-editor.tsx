@@ -51,6 +51,8 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         hasFooter,
     }) => {
         const contentEditable = useRef<HTMLDivElement>(null);
+        const internalActiveDragElement = useRef<HTMLElement | null>(null);
+
         const {
             textToTags,
             transformToPlainText,
@@ -72,34 +74,35 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             }
             let { insertBefore, addExtraSpace } = dropExtraInfo(dropTargetRoot);
 
-            // TODO! test handle first and last child cases
-            {
-                const newElement = document.createElement('div');
-                newElement.innerHTML = content!;
-                const { children } = newElement;
+            const newElement = document.createElement('div');
+            newElement.innerHTML = content!;
+            const { children } = newElement;
 
-                // take last element, cuz for merge tag first child is its meta
-                const insertionNode = Array.from(children)[children.length - 1]!;
+            // take last element, cuz for merge tag first child is its meta
+            const insertionNode = Array.from(children)[children.length - 1]!;
 
-                if (insertBefore) {
-                    editor.insertBefore(insertionNode, dropTargetRoot);
-                    if (addExtraSpace) {
-                        const whiteSpaceElement = document.createElement('span');
-                        whiteSpaceElement.innerText = ' ';
-                        editor.insertBefore(whiteSpaceElement, dropTargetRoot);
-                    }
-                } else {
-                    editor.insertBefore(insertionNode, dropTargetRoot.nextSibling);
-                    if (addExtraSpace) {
-                        const whiteSpaceElement = document.createElement('span');
-                        whiteSpaceElement.innerText = ' ';
-                        editor.insertBefore(whiteSpaceElement, insertionNode);
-                    }
+            if (insertBefore) {
+                editor.insertBefore(insertionNode, dropTargetRoot);
+                if (addExtraSpace) {
+                    const whiteSpaceElement = document.createElement('span');
+                    whiteSpaceElement.innerText = ' ';
+                    editor.insertBefore(whiteSpaceElement, dropTargetRoot);
+                }
+            } else {
+                editor.insertBefore(insertionNode, dropTargetRoot.nextSibling);
+                if (addExtraSpace) {
+                    const whiteSpaceElement = document.createElement('span');
+                    whiteSpaceElement.innerText = ' ';
+                    editor.insertBefore(whiteSpaceElement, insertionNode);
                 }
             }
 
+            if (internalActiveDragElement.current) {
+                removeNeighboringSpaceElement(internalActiveDragElement.current);
+                internalActiveDragElement.current?.remove();
+                internalActiveDragElement.current = null;
+            }
             editor.querySelectorAll('.dragged').forEach(node => {
-                removeNeighboringSpaceElement(node as HTMLElement);
                 node.remove();
             });
 
@@ -129,14 +132,13 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
             if (target) {
                 event.dataTransfer.setData('text/html', target.outerHTML);
-                target.classList.add('dragged');
+                internalActiveDragElement.current = target;
             }
         }, []);
 
         const handleDragEnd = useCallback((event: any) => {
-            const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
             // if merge tag is not dropped remove dragged class, not to remove the element later
-            target.classList.remove('dragged');
+            internalActiveDragElement.current = null;
         }, []);
 
         const handleDragOver = useCallback((event: any) => {
@@ -193,6 +195,9 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                     editor.querySelectorAll('div').forEach(div => {
                         if (div.classList.length === 0 && div.children.length >= 1) {
                             div.classList.add('d-b-i');
+                            // as content of our editor consists only from html element, and no clean text content at all, adding new line by default is added using classes and attributes of the previous element and we need to reset it
+                            // TODO causes another bug, needs to be investigated
+                            // div.innerHTML = '<br>';
                         }
                     });
                 }
