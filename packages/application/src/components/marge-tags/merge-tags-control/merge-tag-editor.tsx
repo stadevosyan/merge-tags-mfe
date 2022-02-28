@@ -22,7 +22,7 @@ import React from 'react';
 interface MergeTagEditorProps {
     value: string;
     onChange: (event: SyntheticEvent<HTMLTextAreaElement & HTMLInputElement>, data: any) => void;
-    error?: boolean | ReactElement<any> | string;
+    error?: boolean | ReactElement | string;
     thin?: boolean;
     hasFooter?: boolean;
     oneline?: boolean;
@@ -73,7 +73,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             if (!content || !dropTargetRoot) {
                 return;
             }
-            let { insertBefore, addExtraSpace } = dropExtraInfo(dropTargetRoot);
+            const { insertBefore, addExtraSpace } = dropExtraInfo(dropTargetRoot);
 
             const newElement = document.createElement('div');
             newElement.innerHTML = content!;
@@ -105,7 +105,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             }
 
             editor.focus();
-            onChange(event as any, {data: transformToPlainText(editor)});
+            onChange(event as any, { data: transformToPlainText(editor) });
         }, []);
 
         useEffect(() => {
@@ -183,19 +183,33 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 if (oneline) {
                     editor.querySelectorAll('br').forEach(node => node.remove());
                 } else {
+                    /*
+                     * TODO causes another bug, needs to be investigated
+                     * as content of our editor consists only from html element, and no clean text content at all,
+                     * adding new line by default is added using classes and attributes of the previous element and we need to reset it
+                     *
+                     */
                     editor.querySelectorAll('div').forEach(div => {
                         if (div.classList.length === 0 && div.children.length >= 1) {
                             div.classList.add('d-b-i');
-                            // as content of our editor consists only from html element, and no clean text content at all, adding new line by default is added using classes and attributes of the previous element and we need to reset it
-                            // TODO causes another bug, needs to be investigated
-                            // div.innerHTML = '<br>';
+                            if (div.children.length > 1) {
+                                const fragment = document.createDocumentFragment();
+                                const nodes = Array.from(div.children) as Node[];
+                                fragment.append(...nodes);
+                                div.innerHTML = '<br>';
+                                if (div.nextSibling) {
+                                    div.nextSibling.insertBefore(fragment, div);
+                                } else {
+                                    div.parentElement!.appendChild(fragment);
+                                }
+                            }
                         }
                     });
                 }
 
                 // to reconstruct tags during onBlur event
                 setIsDirty(true);
-                onChange(event as any, {data: transformToPlainText(editor)});
+                onChange(event as any, { data: transformToPlainText(editor) });
             },
             [oneline]
         );
