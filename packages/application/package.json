@@ -14,7 +14,6 @@
         "@servicetitan/web-components": "~17.5.5",
         "classnames": "^2.3.1",
         "axios": "~0.21.1",
-        "web-components": "^0.0.0",
         "mobx": "6.3.5",
         "mobx-react": "7.2.1",
         "mobx-utils": "6.0.4",
@@ -29,8 +28,7 @@
     },
     "cli": {
         "less": true,
-        "web-component": true,
-        "disable-shadow-dom": true
+        "web-component": true
     },
     "publishConfig": {
         "access": "restricted"
