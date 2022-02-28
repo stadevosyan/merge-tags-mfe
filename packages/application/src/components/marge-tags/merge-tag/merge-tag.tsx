@@ -1,7 +1,6 @@
 import { SyntheticEvent, FC, DragEvent } from 'react';
-import classNames from 'classnames';
-
 import { Tag } from '@servicetitan/design-system';
+import classNames from 'classnames';
 
 import * as Styles from './merge-tag.module.less';
 import React from 'react';

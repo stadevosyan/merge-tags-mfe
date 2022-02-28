@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCallback, useMemo, KeyboardEvent } from 'react';
 import ReactDOM from 'react-dom';
-import { MergeTag } from '../merge-tags-control/merge-tag';
+import { MergeTag } from '../merge-tag/merge-tag';
 
 const mergeTagToHtml = new Map<string, string>();
 

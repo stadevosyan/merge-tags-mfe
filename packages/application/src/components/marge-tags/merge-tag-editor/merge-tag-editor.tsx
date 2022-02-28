@@ -62,6 +62,14 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
         const [isDirty, setIsDirty] = useState(false);
 
+        // works as component did mount with no future updates
+        useEffect(() => {
+            (async () => {
+                contentEditable.current!.innerHTML =
+                    value.trim() === '' ? '' : await textToTags(value, mergeTags);
+            })();
+        }, []);
+
         const handleDrop = useCallback((event: any) => {
             const editor = contentEditable.current!;
             // TODO ref forwarding for merge-tag and merge-tag editor components, will help to get rid of dataTransfer setData/getData logic
@@ -108,13 +116,6 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             onChange(event as any, { data: transformToPlainText(editor) });
         }, []);
 
-        useEffect(() => {
-            (async () => {
-                contentEditable.current!.innerHTML =
-                    value.trim() === '' ? '' : await textToTags(value, mergeTags);
-            })();
-        }, [mergeTags, textToTags]);
-
         // TODO double check if this code is needed, because it is already available inside merge tag component
         const handleDragStart = useCallback((event: any) => {
             const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
@@ -145,28 +146,23 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             onFocus();
         }, [onFocus]);
 
-        const handleBlur = useCallback(
-            async event => {
-                if (isDirty) {
-                    const editor = contentEditable.current!;
-                    const contentToText = transformToPlainText(editor);
+        const handleBlur = useCallback(async () => {
+            if (isDirty) {
+                const editor = contentEditable.current!;
+                const contentToText = transformToPlainText(editor);
 
-                    editor.innerHTML = await textToTags(contentToText, mergeTags);
+                editor.innerHTML = await textToTags(contentToText, mergeTags);
 
-                    // TODO onChange is not triggered after adding required tags
-                    const textTagElements = await generateRemovedRequiredTags(
-                        contentEditable.current
-                    );
-                    if (textTagElements && contentEditable.current) {
-                        contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
-                    }
-
-                    setIsDirty(false);
+                // TODO onChange is not triggered after adding required tags
+                const textTagElements = await generateRemovedRequiredTags(contentEditable.current);
+                if (textTagElements && contentEditable.current) {
+                    contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
                 }
-                onBlur();
-            },
-            [generateRemovedRequiredTags, onBlur, isDirty, setIsDirty]
-        );
+
+                setIsDirty(false);
+            }
+            onBlur();
+        }, [generateRemovedRequiredTags, onBlur, isDirty, setIsDirty]);
 
         const handleDelete = useCallback((event: any) => {
             const target = event.target as HTMLSpanElement;

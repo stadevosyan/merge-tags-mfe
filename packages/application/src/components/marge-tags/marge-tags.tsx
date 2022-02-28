@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Stack, TagGroup } from '@servicetitan/design-system';
 import React, { Fragment } from 'react';
-import { MergeTagEditor } from './merge-tags-control/merge-tag-editor';
-import { MergeTag } from './merge-tags-control/merge-tag';
+import { MergeTagEditor } from './merge-tag-editor/merge-tag-editor';
+import { MergeTag } from './merge-tag/merge-tag';
 
 const mergeTags = [
     {
@@ -88,8 +88,8 @@ export function MergeTags() {
                 value={body}
                 onChange={onChangeHandler}
                 onBlur={blurHandler}
-                error={''}
-                thin={true}
+                error=""
+                thin
                 hasFooter={false}
                 mergeTags={mergeTags}
             />

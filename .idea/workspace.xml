@@ -2,10 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="136c367e-169f-4c69-8a32-5b3c757d502d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/marge-tags.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/marge-tags.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.module.less" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.module.less.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag.module.less" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag.module.less.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tags-control.module.less" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tags-control.module.less.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tags-control.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers/use-merge-tag-editor-helpers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers/use-merge-tag-editor-helpers.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +36,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-control" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -36,6 +44,16 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
     <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-control" />
+      <recent name="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag" />
+      <recent name="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/application/src/components/marge-tags" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -53,6 +71,15 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
