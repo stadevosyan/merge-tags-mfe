@@ -3,7 +3,6 @@ import { Stack, TagGroup } from '@servicetitan/design-system';
 import React, { Fragment } from 'react';
 import { MergeTagEditor } from './merge-tags-control/merge-tag-editor';
 import { MergeTag } from './merge-tags-control/merge-tag';
-import { MergeTagEditor_Old } from './merge-tags-control-old/merge-tag-editor-old';
 
 const mergeTags = [
     {

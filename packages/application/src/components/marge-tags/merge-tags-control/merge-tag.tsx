@@ -20,6 +20,7 @@ export const MergeTag: FC<MergeTagProps> = ({
     disabled,
     readonly,
 }) => {
+    // TODO ref forwarding from parent will help to cleanup dataTransfer setData/getData logic
     const dragHandler = (evt: DragEvent) => {
         const target = evt.target as HTMLSpanElement;
         evt.dataTransfer?.setData('text/html', target?.outerHTML);

@@ -62,8 +62,9 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
         const [isDirty, setIsDirty] = useState(false);
 
-        const handleDrop = useCallback((event: DragEvent) => {
+        const handleDrop = useCallback((event: any) => {
             const editor = contentEditable.current!;
+            // TODO ref forwarding for merge-tag and merge-tag editor components, will help to get rid of dataTransfer setData/getData logic
             const content = event?.dataTransfer?.getData('text/html');
 
             const dropTarget = event.target as HTMLElement;
@@ -102,22 +103,10 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 internalActiveDragElement.current?.remove();
                 internalActiveDragElement.current = null;
             }
-            editor.querySelectorAll('.dragged').forEach(node => {
-                node.remove();
-            });
 
             editor.focus();
+            onChange(event as any, {data: transformToPlainText(editor)});
         }, []);
-
-        useEffect(() => {
-            if (contentEditable.current) {
-                contentEditable.current.addEventListener('drop', handleDrop);
-
-                return () => {
-                    document.removeEventListener('drop', handleDrop);
-                };
-            }
-        }, [contentEditable.current]);
 
         useEffect(() => {
             (async () => {
@@ -126,8 +115,11 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             })();
         }, [mergeTags, textToTags]);
 
+        // TODO double check if this code is needed, because it is already available inside merge tag component
         const handleDragStart = useCallback((event: any) => {
             const target = event.target.closest('[data-merge-tag]') as HTMLDivElement;
+
+            // TODO if is dirty, during on drag most probably is needed to trigger text to tags logic
 
             if (target) {
                 event.dataTransfer.setData('text/html', target.outerHTML);
@@ -136,7 +128,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         }, []);
 
         const handleDragEnd = useCallback((event: any) => {
-            // if merge tag is not dropped remove dragged class, not to remove the element later
+            // if merge tag is not dropped remove stored draggable element, not to remove the element later
             internalActiveDragElement.current = null;
         }, []);
 
@@ -161,6 +153,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
                     editor.innerHTML = await textToTags(contentToText, mergeTags);
 
+                    // TODO onChange is not triggered after adding required tags
                     const textTagElements = await generateRemovedRequiredTags(
                         contentEditable.current
                     );
@@ -202,6 +195,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
                 // to reconstruct tags during onBlur event
                 setIsDirty(true);
+                onChange(event as any, {data: transformToPlainText(editor)});
             },
             [oneline]
         );
@@ -231,6 +225,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                     onDragEnd={handleDragEnd}
                     onDragOver={handleDragOver}
                     onInput={handleChange}
+                    onDrop={handleDrop}
                     onBlur={handleBlur}
                     onFocus={handleFocus}
                     onKeyDown={handleKeyDown}

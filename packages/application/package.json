@@ -29,7 +29,8 @@
     },
     "cli": {
         "less": true,
-        "web-component": true
+        "web-component": true,
+        "disable-shadow-dom": true
     },
     "publishConfig": {
         "access": "restricted"

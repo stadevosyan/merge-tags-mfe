@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="136c367e-169f-4c69-8a32-5b3c757d502d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/marge-tags.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/marge-tags.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-editor-old.module.less" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-editor-old.module.less.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-editor-old.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-my.module.less.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-old.module.less" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-old.module.less.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control-old/merge-tag-old.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag-editor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tags-control/merge-tag.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers-old/use-merge-tag-editor-helpers-old.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers/use-merge-tag-editor-helpers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers/use-merge-tag-editor-helpers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/startup/bin/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/CHANGELOG.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/src/common.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/src/history-manager.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/src/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/src/loader.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/src/optional-value-provider.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/src/register.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/web-components/tsconfig.json" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="25jQC8a8qyFPjoL2vZOAUvoP7Lv" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.stylelint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.stylelint" value="$PROJECT_DIR$/node_modules/stylelint" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="136c367e-169f-4c69-8a32-5b3c757d502d" name="Changes" comment="" />
+      <created>1646037887244</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1646037887244</updated>
+      <workItem from="1646037893619" duration="1159000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

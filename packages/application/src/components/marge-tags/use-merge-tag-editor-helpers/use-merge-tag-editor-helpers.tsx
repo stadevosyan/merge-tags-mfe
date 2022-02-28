@@ -136,6 +136,7 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
         return await textToTags(textToConvert, availableMergeTags);
     };
 
+    // TODO change the whole logic, to create tags and insert tags instead of text concatination
     const textToTags = useCallback(
         async (
             text: string,
@@ -149,7 +150,8 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
             while (i < text.length) {
                 const char = text[i];
 
-                if (char === '{' && text[i + 1] === '{') {
+                // TODO cleanup checks below
+                if (char === '{' && text[i + 1] === '{' && checkIfItIsMergeTag(text, i, availableMergeTags)) {
                     let mergeTag = checkIfItIsMergeTag(text, i, availableMergeTags);
 
                     if (mergeTag) {
