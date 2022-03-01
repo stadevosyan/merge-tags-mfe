@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     useCallback,
     useEffect,
@@ -11,13 +12,9 @@ import {
 import { observer } from 'mobx-react';
 import classNames from 'classnames';
 import * as Styles from './merge-tag-editor.module.less';
-import {
-    ContentNodeType,
-    isTextElement,
-    TextTypeAttribute,
-    useMergeTagsEditorHelpers,
-} from '../use-merge-tag-editor-helpers/use-merge-tag-editor-helpers';
-import React from 'react';
+import { useMergeTagsEditorHelpers } from '../use-merge-tag-editor-helpers/use-merge-tag-editor-helpers';
+import { dropExtraInfo } from '../utils/drop-extra-info';
+import { removeNeighboringSpaceElement } from '../utils/remove-neighboring-space-element';
 
 interface MergeTagEditorProps {
     value: string;
@@ -70,51 +67,54 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             })();
         }, []);
 
-        const handleDrop = useCallback((event: any) => {
-            const editor = contentEditable.current!;
-            // TODO ref forwarding for merge-tag and merge-tag editor components, will help to get rid of dataTransfer setData/getData logic
-            const content = event?.dataTransfer?.getData('text/html');
+        const handleDrop = useCallback(
+            (event: any) => {
+                const editor = contentEditable.current!;
+                // TODO ref forwarding for merge-tag and merge-tag editor components, will help to get rid of dataTransfer setData/getData logic
+                const content = event?.dataTransfer?.getData('text/html');
 
-            const dropTarget = event.target as HTMLElement;
-            const dropTargetRoot = dropTarget.closest('[data-node-type]') as HTMLElement;
+                const dropTarget = event.target as HTMLElement;
+                const dropTargetRoot = dropTarget.closest('[data-node-type]') as HTMLElement;
 
-            if (!content || !dropTargetRoot) {
-                return;
-            }
-            const { insertBefore, addExtraSpace } = dropExtraInfo(dropTargetRoot);
-
-            const newElement = document.createElement('div');
-            newElement.innerHTML = content!;
-            const { children } = newElement;
-
-            // take last element, cuz for merge tag first child is its meta
-            const insertionNode = Array.from(children)[children.length - 1]!;
-
-            if (insertBefore) {
-                editor.insertBefore(insertionNode, dropTargetRoot);
-                if (addExtraSpace) {
-                    const whiteSpaceElement = document.createElement('span');
-                    whiteSpaceElement.innerText = ' ';
-                    editor.insertBefore(whiteSpaceElement, dropTargetRoot);
+                if (!content || !dropTargetRoot) {
+                    return;
                 }
-            } else {
-                editor.insertBefore(insertionNode, dropTargetRoot.nextSibling);
-                if (addExtraSpace) {
-                    const whiteSpaceElement = document.createElement('span');
-                    whiteSpaceElement.innerText = ' ';
-                    editor.insertBefore(whiteSpaceElement, insertionNode);
+                const { insertBefore, addExtraSpace } = dropExtraInfo(dropTargetRoot);
+
+                const newElement = document.createElement('div');
+                newElement.innerHTML = content!;
+                const { children } = newElement;
+
+                // take last element, cuz for merge tag first child is its meta
+                const insertionNode = Array.from(children)[children.length - 1]!;
+
+                if (insertBefore) {
+                    editor.insertBefore(insertionNode, dropTargetRoot);
+                    if (addExtraSpace) {
+                        const whiteSpaceElement = document.createElement('span');
+                        whiteSpaceElement.innerText = ' ';
+                        editor.insertBefore(whiteSpaceElement, dropTargetRoot);
+                    }
+                } else {
+                    editor.insertBefore(insertionNode, dropTargetRoot.nextSibling);
+                    if (addExtraSpace) {
+                        const whiteSpaceElement = document.createElement('span');
+                        whiteSpaceElement.innerText = ' ';
+                        editor.insertBefore(whiteSpaceElement, insertionNode);
+                    }
                 }
-            }
 
-            if (internalActiveDragElement.current) {
-                removeNeighboringSpaceElement(internalActiveDragElement.current);
-                internalActiveDragElement.current?.remove();
-                internalActiveDragElement.current = null;
-            }
+                if (internalActiveDragElement.current) {
+                    removeNeighboringSpaceElement(internalActiveDragElement.current);
+                    internalActiveDragElement.current?.remove();
+                    internalActiveDragElement.current = null;
+                }
 
-            editor.focus();
-            onChange(event as any, { data: transformToPlainText(editor) });
-        }, []);
+                editor.focus();
+                onChange(event as any, { data: transformToPlainText(editor) });
+            },
+            [onChange, transformToPlainText]
+        );
 
         // TODO double check if this code is needed, because it is already available inside merge tag component
         const handleDragStart = useCallback((event: any) => {
@@ -128,7 +128,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             }
         }, []);
 
-        const handleDragEnd = useCallback((event: any) => {
+        const handleDragEnd = useCallback((_event: any) => {
             // if merge tag is not dropped remove stored draggable element, not to remove the element later
             internalActiveDragElement.current = null;
         }, []);
@@ -162,7 +162,14 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 setIsDirty(false);
             }
             onBlur();
-        }, [generateRemovedRequiredTags, onBlur, isDirty, setIsDirty]);
+        }, [
+            isDirty,
+            onBlur,
+            transformToPlainText,
+            textToTags,
+            mergeTags,
+            generateRemovedRequiredTags,
+        ]);
 
         const handleDelete = useCallback((event: any) => {
             const target = event.target as HTMLSpanElement;
@@ -174,7 +181,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         }, []);
 
         const handleChange = useCallback(
-            async (event: SyntheticEvent<HTMLDivElement>) => {
+            (event: SyntheticEvent<HTMLDivElement>) => {
                 const editor = contentEditable.current!;
                 if (oneline) {
                     editor.querySelectorAll('br').forEach(node => node.remove());
@@ -207,7 +214,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 setIsDirty(true);
                 onChange(event as any, { data: transformToPlainText(editor) });
             },
-            [oneline]
+            [onChange, oneline, transformToPlainText]
         );
 
         const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -248,58 +255,3 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
         );
     }
 );
-
-const removeNeighboringSpaceElement = (node: HTMLElement) => {
-    const leftSibling = node.previousElementSibling as HTMLElement;
-    if (leftSibling && isTextElement(leftSibling)) {
-        leftSibling.remove();
-    } else {
-        const rightSibling = node.nextElementSibling as HTMLElement;
-        if (rightSibling && isTextElement(rightSibling)) {
-            rightSibling.remove();
-        }
-    }
-};
-
-const dropExtraInfo = (element: HTMLElement) => {
-    let insertBefore;
-    let addExtraSpace;
-
-    if (element?.getAttribute('data-node-type') === ContentNodeType.Text) {
-        const textType = element.getAttribute('data-text-type');
-
-        switch (textType) {
-            case TextTypeAttribute.FirstSpace:
-            case TextTypeAttribute.RightText: {
-                insertBefore = false;
-                addExtraSpace = true;
-                break;
-            }
-            case TextTypeAttribute.NewLine: {
-                insertBefore = false;
-                addExtraSpace = false;
-                break;
-            }
-            case TextTypeAttribute.SingleChar:
-            case TextTypeAttribute.LeftText: {
-                insertBefore = true;
-                addExtraSpace = true;
-                break;
-            }
-            case TextTypeAttribute.NotFirstSpace: {
-                insertBefore = true;
-                addExtraSpace = false;
-                break;
-            }
-        }
-    } else {
-        // if the drop target is merge-tag
-        insertBefore = false;
-        addExtraSpace = true;
-    }
-
-    return {
-        insertBefore,
-        addExtraSpace,
-    };
-};
