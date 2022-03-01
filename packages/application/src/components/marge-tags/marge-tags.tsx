@@ -71,7 +71,7 @@ const body =
 
 export function MergeTags() {
     const onChangeHandler = (e, data) => {
-        console.log('value: ', data.data);
+        console.log('value: ', data.value);
     };
 
     const blurHandler = (e) => {

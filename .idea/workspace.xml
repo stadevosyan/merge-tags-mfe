@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="136c367e-169f-4c69-8a32-5b3c757d502d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/utils/drop-extra-info.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/marge-tags.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/marge-tags.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tag-editor/merge-tag-editor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/merge-tag-editor/merge-tag-editor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers/use-merge-tag-editor-helpers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/application/src/components/marge-tags/use-merge-tag-editor-helpers/use-merge-tag-editor-helpers.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -111,7 +111,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
                 }
 
                 editor.focus();
-                onChange(event as any, { data: transformToPlainText(editor) });
+                onChange(event as any, { value: transformToPlainText(editor) });
             },
             [onChange, transformToPlainText]
         );
@@ -146,30 +146,37 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
             onFocus();
         }, [onFocus]);
 
-        const handleBlur = useCallback(async () => {
-            if (isDirty) {
-                const editor = contentEditable.current!;
-                const contentToText = transformToPlainText(editor);
+        const handleBlur = useCallback(
+            async event => {
+                if (isDirty) {
+                    const editor = contentEditable.current!;
+                    const contentToText = transformToPlainText(editor);
 
-                editor.innerHTML = await textToTags(contentToText, mergeTags);
+                    editor.innerHTML = await textToTags(contentToText, mergeTags);
 
-                // TODO onChange is not triggered after adding required tags
-                const textTagElements = await generateRemovedRequiredTags(contentEditable.current);
-                if (textTagElements && contentEditable.current) {
-                    contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
+                    // TODO onChange is not triggered after adding required tags
+                    const textTagElements = await generateRemovedRequiredTags(
+                        contentEditable.current
+                    );
+                    if (textTagElements && contentEditable.current) {
+                        contentEditable.current.insertAdjacentHTML('beforeend', textTagElements);
+                        onChange(event, { value: transformToPlainText(contentEditable.current) });
+                    }
+
+                    setIsDirty(false);
                 }
-
-                setIsDirty(false);
-            }
-            onBlur();
-        }, [
-            isDirty,
-            onBlur,
-            transformToPlainText,
-            textToTags,
-            mergeTags,
-            generateRemovedRequiredTags,
-        ]);
+                onBlur();
+            },
+            [
+                isDirty,
+                onBlur,
+                transformToPlainText,
+                textToTags,
+                mergeTags,
+                generateRemovedRequiredTags,
+                onChange,
+            ]
+        );
 
         const handleDelete = useCallback((event: any) => {
             const target = event.target as HTMLSpanElement;
@@ -212,7 +219,7 @@ export const MergeTagEditor: FC<MergeTagEditorProps> = observer(
 
                 // to reconstruct tags during onBlur event
                 setIsDirty(true);
-                onChange(event as any, { data: transformToPlainText(editor) });
+                onChange(event as any, { value: transformToPlainText(editor) });
             },
             [onChange, oneline, transformToPlainText]
         );

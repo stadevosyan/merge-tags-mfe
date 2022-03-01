@@ -143,16 +143,21 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
             availableMergeTags: { tag: string; label: string; required?: boolean }[]
         ) => {
             let textsConverted = '';
-            let mergeTagsInfo: IMergeTagInfo[] = [];
+            const mergeTagsInfo: IMergeTagInfo[] = [];
             let lastMatch: MatchType | undefined;
             let i = 0;
 
             while (i < text.length) {
                 const char = text[i];
+                const chatCode = text.charCodeAt(i);
 
                 // TODO cleanup checks below
-                if (char === '{' && text[i + 1] === '{' && checkIfItIsMergeTag(text, i, availableMergeTags)) {
-                    let mergeTag = checkIfItIsMergeTag(text, i, availableMergeTags);
+                if (
+                    char === '{' &&
+                    text[i + 1] === '{' &&
+                    checkIfItIsMergeTag(text, i, availableMergeTags)
+                ) {
+                    const mergeTag = checkIfItIsMergeTag(text, i, availableMergeTags);
 
                     if (mergeTag) {
                         mergeTagsInfo.push({
@@ -163,15 +168,15 @@ export const useMergeTagsEditorHelpers = (mergeTags: IEditorMergeTags[]) => {
                         lastMatch = MatchType.MergeTag;
                         i += mergeTag.length;
                     }
-                } else if (matchesSpace(char)) {
-                    let typeAttribute =
+                } else if (matchesSpace(char) && chatCode !== 10) {
+                    const typeAttribute =
                         lastMatch !== MatchType.Space
                             ? TextTypeAttribute.FirstSpace
                             : TextTypeAttribute.NotFirstSpace;
                     textsConverted += textNodeHtmlString(typeAttribute, char);
                     i++;
                     lastMatch = MatchType.Space;
-                } else if (matchesNewLine(char)) {
+                } else if (matchesNewLine(char) && chatCode === 10) {
                     textsConverted += textNodeHtmlString(TextTypeAttribute.NewLine, char);
                     i++;
                     lastMatch = MatchType.NewLine;
@@ -224,6 +229,7 @@ const processMergeTags = async (
                                 resolve(true);
                             });
                         } catch (e) {
+                            // eslint-disable-next-line no-console
                             console.warn(e);
                             mergeTagToHtml.set(item, '');
                             resolve(true);
@@ -287,9 +293,8 @@ const findMatchWord = (
             return word;
         } else if (matchesWhiteSpace(text[j])) {
             return word;
-        } else {
-            word += text[j];
         }
+        word += text[j];
     }
     return word;
 };
@@ -299,7 +304,7 @@ const wordToSpanTags = (word: string) => {
     const leftText = word.slice(0, centerIndex);
     const rightText = word.slice(centerIndex, word.length);
 
-    let leftSpanTypeAttribute =
+    const leftSpanTypeAttribute =
         rightText !== undefined ? TextTypeAttribute.LeftText : TextTypeAttribute.SingleChar;
     let tagsString = textNodeHtmlString(leftSpanTypeAttribute, leftText);
 
